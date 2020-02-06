@@ -52,42 +52,42 @@ with open('graph_data.csv','a') as graph_file:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
 
     percentile_values=value_range(91,99,1)
     for percentile in percentile_values:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
     
     percentile_values=value_range(99,100,0.1)
     for percentile in percentile_values:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
     
     percentile_values=value_range(99.91,100,0.01)
     for percentile in percentile_values:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
     
     percentile_values=value_range(99.991,100,0.001)
     for percentile in percentile_values:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
     
     percentile_values=value_range(99.9991,100,0.0001)
     for percentile in percentile_values:
         graph_file.write(str(x_axis_location)+',')
         graph_file.write(str(histogram.get_value_at_percentile(float(percentile)))+',')
         graph_file.write(str(percentile)+'\n')
-        x_axis_location++
+        x_axis_location+=1
     
     value_at_9999_percentile = histogram.get_value_at_percentile(99.9999)
     for each_entry in sorted_data:
@@ -109,7 +109,7 @@ with open('graph_data.csv','a') as graph_file:
                 graph_file.write(str(each_entry)+',')
                 graph_file.write(str(item.percentile)+'\n')
                 count_of_values_larger_than_9999_percentile+=1
-                x_axis_location++
+                x_axis_location+=1
 
     if count_of_values_larger_than_9999_percentile!=len(values_larger_than_9999_percentile):
         print("Error: Not all values larger than 999 percentile plotted.")
