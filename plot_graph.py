@@ -21,6 +21,9 @@ file_name = sys.argv[1] #name of the file containing latency numbers
 sorted_data=[]
 values_larger_than_9999_percentile=[]
 
+file_name=file_name.split('.')
+file_name=file_name[0]
+
 # histogram __init__ values
 LOWEST = 1
 HIGHEST = 30000
@@ -28,7 +31,7 @@ SIGNIFICANT = 4
 
 histogram = HdrHistogram(LOWEST, HIGHEST, SIGNIFICANT)
 
-with open(file_name,'r') as in_file, open('sorted_'+file_name,'w') as out_file:
+with open(file_name+'.txt','r') as in_file, open('sorted_'+file_name+'.txt','w') as out_file:
     for each_line in in_file:
         sorted_data.append(int(each_line))
     sorted_data.sort()
@@ -36,16 +39,18 @@ with open(file_name,'r') as in_file, open('sorted_'+file_name,'w') as out_file:
         out_file.write(str(each_entry)+'\n')
         histogram.record_value(each_entry)
 
-histogram.output_percentile_distribution(open('histogram_file.csv', 'wb'), 1)
-print("Histogram file (hdrm file) generated.")
+histogram.output_percentile_distribution(open(file_name+'_histogram_file.csv', 'wb'), 1)
+print("Histogram file (hdrm file) generated.\n")
 
-if os.path.exists('graph_data.csv'):
-    os.remove('graph_data.csv')
-    print('File removed')
+#No need. Just open _graph_data.csv in w mode
+if os.path.exists(file_name+'_graph_data.csv'):
+    print('File '+file_name+'_graph_data.csv already exists. Removing ...')
+    os.remove(file_name+'_graph_data.csv')
+    print('File '+file_name+'_graph_data.csv removed.\n')
 
 x_axis_location=0
 
-with open('graph_data.csv','a') as graph_file:
+with open(file_name+'_graph_data.csv','a') as graph_file:
     
     percentile_values=value_range(0,91,10)
     for percentile in percentile_values:
@@ -96,8 +101,7 @@ with open('graph_data.csv','a') as graph_file:
     
     print("Values Larger than 9999: ")
     print(values_larger_than_9999_percentile)
-    print("")
-    print("Total no of values larger than 9999 percentile: "+str(len(values_larger_than_9999_percentile)))
+    print("Total no of values larger than 9999 percentile: "+str(len(values_larger_than_9999_percentile))+"\n")
     count_of_values_larger_than_9999_percentile=0
     for each_entry in values_larger_than_9999_percentile:
         for item in histogram.get_recorded_iterator():
@@ -115,7 +119,7 @@ with open('graph_data.csv','a') as graph_file:
         print("Error: Not all values larger than 999 percentile plotted.")
         print("Solution: Increase value of SIGNIFICANT on line 22.")
 
-print("graph_data (csv file) generated.")
+print("graph_data (csv file) generated.\n")
 
 #-----End-----Data generation-----End-----
 
@@ -123,7 +127,7 @@ print("graph_data (csv file) generated.")
 
 x_axis=[]
 y_axis=[]
-graph_file='graph_data.csv'
+graph_file=file_name+'_graph_data.csv'
 
 with open(graph_file,'r') as in_file:
     for each_line in in_file:
@@ -131,7 +135,7 @@ with open(graph_file,'r') as in_file:
         x_axis.append(float(temp[0]))
         y_axis.append(float(temp[1]))
 
-fig = plt.figure(figsize=(10, 7))
+fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
 
 plt.xlabel("Percentile(%)")
@@ -220,7 +224,10 @@ ax.plot(x_axis,y_axis,linestyle="",marker=".",color="b")
 
 ax.set_xlim(xmin=-0.2)
 ax.set_ylim(ymin=0)
-plt.savefig('latency_graph_310_24hr_pcap.png',bbox_inches='tight')
+
+plt.savefig(file_name+'.png',bbox_inches='tight')
+print("Graph plot saved in png file.\n")
+print("Displaying graph.\n")
 plt.show()
 
 #-----End-----Plotting Graph using Matplotlib-----End-----
