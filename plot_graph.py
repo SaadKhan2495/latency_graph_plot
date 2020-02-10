@@ -1,5 +1,6 @@
 import sys
 import os
+import shutil
 import decimal
 import math
 import matplotlib.pyplot as plt
@@ -18,11 +19,19 @@ def value_range(start,stop,step):
         iteration_value=decimal.Decimal(str(start))+(decimal.Decimal(str(step))*decimal.Decimal(str(loop_iterator)))
 
 file_name = sys.argv[1] #name of the file containing latency numbers
+show_graph = sys.argv[2]
 sorted_data=[]
 values_larger_than_9999_percentile=[]
 
 file_name=file_name.split('.')
 file_name=file_name[0]
+
+if(os.path.isdir('./'+file_name)):
+    shutil.rmtree('./'+file_name)
+    print("Folder: "+file_name+" already exits. Deleting...\n")
+
+os.mkdir(file_name)
+print("Folder: "+file_name+" generated.\n")
 
 # histogram __init__ values
 LOWEST = 1
@@ -31,13 +40,16 @@ SIGNIFICANT = 4
 
 histogram = HdrHistogram(LOWEST, HIGHEST, SIGNIFICANT)
 
-with open(file_name+'.txt','r') as in_file, open('sorted_'+file_name+'.txt','w') as out_file:
+with open(file_name+'.txt','r') as in_file, open(file_name+'/sorted_'+file_name+'.txt','w') as out_file:
     for each_line in in_file:
         sorted_data.append(int(each_line))
     sorted_data.sort()
     for each_entry in sorted_data:
         out_file.write(str(each_entry)+'\n')
         histogram.record_value(each_entry)
+
+os.chdir(file_name)
+print("Changing directory to "+file_name+"/.\n")
 
 histogram.output_percentile_distribution(open(file_name+'_histogram_file.csv', 'wb'), 1)
 print("Histogram file (hdrm file) generated.\n")
@@ -227,7 +239,9 @@ ax.set_ylim(ymin=0)
 
 plt.savefig(file_name+'.png',bbox_inches='tight')
 print("Graph plot saved in png file.\n")
-print("Displaying graph.\n")
-plt.show()
+
+if(show_graph=='1'):
+    print("Displaying graph.\n")
+    plt.show()
 
 #-----End-----Plotting Graph using Matplotlib-----End-----
